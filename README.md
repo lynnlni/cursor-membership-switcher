@@ -109,7 +109,31 @@ python3 cursor_membership.py
 
 A live demo of the switcher in action (in Chinese):
 
-- [Demo Recording](录屏2026-04-19%2009.45.29.mov)
+<!-- 替换下面的 VIDEO_ID 为你的 YouTube/Bilibili 视频 ID -->
+<!-- YouTube: -->
+<iframe
+  width="960"
+  height="540"
+  src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
+  title="Cursor Membership Switcher Demo"
+  frameborder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowfullscreen>
+</iframe>
+
+<!-- Bilibili: -->
+<!--
+<iframe
+  width="960"
+  height="540"
+  src="//player.bilibili.com/player.html?bvid=YOUR_BVID&page=1"
+  scrolling="no"
+  frameborder="0"
+  allowfullscreen>
+</iframe>
+-->
+
+本地视频文件: [cursor_demo.mov](cursor_demo.mov)
 
 ---
 
