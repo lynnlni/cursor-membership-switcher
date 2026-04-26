@@ -21,7 +21,8 @@ MEMBERSHIP_TYPES = {
 }
 
 # The original snippet we patch inside storeMembershipType
-ORIGINAL_SNIPPET = "r=r??Pa.FREE,"
+# For Cursor 3.2.11, the original snippet is "r=r??Xl.FREE,"
+ORIGINAL_SNIPPET = ["r=r??Xl.FREE,", "r=r??Pa.FREE,"]
 PATCH_MARKER     = "/*__cursor_membership_patch__*/"
 
 
@@ -35,7 +36,17 @@ def check_env():
 
 
 def is_cursor_running() -> bool:
-    return subprocess.run(["pgrep", "-x", "Cursor"], capture_output=True).returncode == 0
+    try:
+        result = subprocess.run(["ps", "aux"], capture_output=True, text=True)
+        for line in result.stdout.splitlines():
+            if (
+                "/Applications/Cursor.app/Contents/MacOS/Cursor" in line
+                and "grep" not in line
+            ):
+                return True
+        return False
+    except Exception:
+        return False
 
 
 def read_js() -> str:
@@ -72,11 +83,23 @@ def apply_patch(value: str):
         if not BACKUP_PATH.exists():
             shutil.copy2(JS_PATH, BACKUP_PATH)
             print(f"  Backup saved: {BACKUP_PATH.name}")
-        content = content.replace(
-            ORIGINAL_SNIPPET,
-            get_patch_snippet(value) + ORIGINAL_SNIPPET,
-            1
-        )
+
+        # Replace the original snippet with the new patch
+        replace_success: bool = False
+        for original_snippet in ORIGINAL_SNIPPET:
+            new_content = content.replace(
+                original_snippet, get_patch_snippet(value) + original_snippet, 1
+            )
+            if current_patch(new_content) is not None:
+                replace_success = True
+                break
+        if not replace_success:
+            print(f"Error: {'or '.join(ORIGINAL_SNIPPET).rstrip(',')} not found. Patch failed.")
+            print("Possible causes:")
+            print(" - Cursor has been updated and the snippet or the file path changed")
+            print(" - Please contact the author for updates")
+            sys.exit(1)
+        content = new_content
 
     write_js(content)
 
